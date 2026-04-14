@@ -1,292 +1,356 @@
-scene:
-  n_envs: 1
-  sim:
-    dt: 0.05
-    substeps: 1
-    substeps_local: null
-    gravity: [0.0, 0.0, -9.81]
-    floor_height: 0.0
-    requires_grad: false
+builder:
+  # --- Material properties ---
+  default_shape_cfg:
+    density: 1000.0                # kg/m^3
+    ke: 1.0e5                     # contact elastic stiffness
+    kd: 1000.0                      # damping coefficient
+    kf: 1000.0                     # friction damping
+    ka: 0.0                        # adhesion distance
+    mu: 1.0                        # friction coefficient
+    restitution: 0.0               # bounciness (0 = no bounce)
+    mu_torsional: 0.005            # torsional friction
+    mu_rolling: 0.0001             # rolling resistance
+    margin: 0.0                    # collision margin (meters)
+    gap: null                      # optional, fallback to engine default
+    is_solid: true                 # solid vs hollow
+    collision_group: 1             # 0 disables collisions
+    collision_filter_parent: true  # inherit parent filter
+    has_shape_collision: true
+    has_particle_collision: true
+    is_visible: true
+    is_site: false                 # non-colliding reference point
+    sdf_narrow_band_range: [-0.1, 0.1]
+    sdf_target_voxel_size: null    # enables SDF if set
+    sdf_max_resolution: null       # must be divisible by 8
+    sdf_texture_format: "uint16"   # uint8 | uint16 | float32
+    is_hydroelastic: false
+    kh: 1.0e10                    # stiffness for hydroelastic collisions
+  default_joint_cfg:
+    axis: [0.0, 0.0, 1.0]
+    limit_lower: -1.57
+    limit_upper: 1.57
+    limit_ke: 10000.0
+    limit_kd: 10.0
+    target_pos: 0.0
+    target_vel: 0.0
+    target_ke: 200.0
+    target_kd: 5.0
+    armature: 0.0
+    effort_limit: 1e6
+    velocity_limit: 10.0
+    friction: 0.1
+    actuator_mode: "position"
 
-  tool_config:
-    dt: 0.01
-    floor_height: 0.0
+sim:
+  fps: 30
+  substeps: 1
+  # update_step_interval: 100
 
-  show_Viewer: true
+viewer:
+  type: gl
+  width: 1920
+  height: 1080
+  vysnc: false
+  headless: false
 
-  profiling_options:
-    show_FPS: false
-    FPS_tracker_alpha: 0.9
+solver:
+  rigid:
+    type: featherstone
+    angular_damping: 0.05
+    update_mass_matrix_interval: 1
+    friction_smoothing: 1.0
+    use_tile_gemm: false
+    fuse_cholesky: true
+  soft:
+    type: 
 
-  viewer_config:
-    res: null
-    run_in_thread: false
-    refresh_rate: 60
-    max_FPS: 60
-    camera_pos: [3.5, 0.5, 2.5]
-    camera_lookat: [0.0, 0.0, 0.5]
-    camera_up: [0.0, 0.0, 1.0]
-    camera_fov: 40
-    enable_interaction: false
-
-  vis_config:
-    show_world_frame: false
-    world_frame_size: 1.0
-    show_link_frame: false
-    link_frame_size: 0.2
-    show_cameras: false
-    shadow: false
-    plane_reflection: false
-    env_separate_rigid: false
-    background_color: [0.04, 0.08, 0.12]
-    ambient_light: [0.1, 0.1, 0.1]
-    visualize_mpm_boundary: false
-    visualize_sph_boundary: false
-    visualize_pbd_boundary: false
-    segmentation_level: "link"
-    render_particle_as: "sphere"
-    particle_size_scale: 1.0
-    contact_force_scale: 0.01
-    n_support_neighbors: 12
-    n_rendered_envs: null
-    rendered_envs_idx: null
-    lights:
-      - type: directional
-        dir: [-1, -1, -1]
-        color: [1.0, 1.0, 1.0]
-        intensity: 5.0
-
-  rigid_config:
-    dt: null
-    gravity: null
-    enable_collision: true
-    enable_joint_limit: true
-    enable_self_collision: false
-    enable_adjacent_collision: false
-    disable_constraint: false
-    max_collision_pairs: 300
-    integrator: 1
-    IK_max_targets: 6
-    batch_links_info: false
-    batch_joints_info: false
-    batch_dofs_info: false
-    constraint_solver: 1
-    iterations: 50
-    tolerance: 1e-8
-    ls_iterations: 50
-    ls_tolerance: 0.01
-    sparse_solve: false
-    contact_resolve_time: null
-    use_contact_island: false
-    box_box_detection: false
-    use_hibernation: false
-    hibernation_thresh_vel: 0.001
-    hibernation_thresh_acc: 0.01
-    max_dynamic_constraints: 8
-    enable_multi_contact: true
-    enable_mujoco_compatibility: false
-    use_gjk_collision: false
-
-  avatar_config:
-    dt: null
-    enable_collision: false
-    enable_self_collision: false
-    enable_adjacent_collision: false
-    max_collision_pairs: 300
-    IK_max_targets: 6
-    max_dynamic_constraints: 8
-
-  mpm_config:
-    dt: null
-    gravity: null
-    particle_size: null
-    grid_density: 64
-    enable_CPIC: false
-    lower_bound: [-1.0, -1.0, 0.0]
-    upper_bound: [1.0, 1.0, 1.0]
-    use_sparse_grid: false
-    leaf_block_size: 8
-
-  sph_config:
-    dt: null
-    gravity: null
-    particle_size: 0.02
-    pressure_solver: "WCSPH"
-    lower_bound: [-100.0, -100.0, 0.0]
-    upper_bound: [100.0, 100.0, 100.0]
-    hash_grid_res: null
-    hash_grid_cell_size: null
-    max_divergence_error: 0.1
-    max_density_error_percent: 0.05
-    max_divergence_solver_iterations: 100
-    max_density_solver_iterations: 100
-
-  pbd_config:
-    dt: null
-    gravity: null
-    max_stretch_solver_iterations: 4
-    max_bending_solver_iterations: 1
-    max_volume_solver_iterations: 1
-    max_density_solver_iterations: 1
-    max_viscosity_solver_iterations: 1
-    particle_size: 0.01
-    hash_grid_res: null
-    hash_grid_cell_size: null
-    lower_bound: [-100.0, -100.0, 0.0]
-    upper_bound: [100.0, 100.0, 100.0]
-
-  fem_config:
-    dt: null
-    gravity: null
-    damping: 0.0
-    floor_height: 0
-    use_implicit_solver: false
-    n_newton_iterations: 1
-    n_pcg_iterations: 500
-    n_linesearch_iterations: 0
-    newton_dx_threshold: 1e-6
-    pcg_threshold: 1e-6
-    linesearch_c: 1e-4
-    linesearch_tau: 0.5
-    damping_alpha: 0.5
-    damping_beta: 0.0005
-
-  sf_config:
-    dt: null
-    res: 128
-    solver_iters: 500
-    decay: 0.99
-    T_low: 1.0
-    T_high: 0.0
-    inlet_pos: [1, 0.0, 0.0]
-    inlet_vel: [0, 0, 1]
-    inlet_quat: [1, 0, 0, 0]
-    inlet_s: 400.0
-
-  coupler_config:
-    type: "legacy"
-    legacy:
-      rigid_mpm: true
-      rigid_sph: true
-      rigid_pbd: true
-      rigid_fem: true
-      mpm_sph: true
-      mpm_pbd: true
-      fem_mpm: true
-      fem_sph: true
-    sap:
-      n_sap_iterations: 5
-      n_pcg_iterations: 100
-      n_linesearch_iterations: 10
-      sap_convergence_atol: 1e-6
-      sap_convergence_rtol: 1e-5
-      sap_taud: 0.1
-      sap_beta: 1.0
-      sap_sigma: 1e-3
-      pcg_threshold: 1e-6
-      linesearch_ftol: 1e-6
-      linesearch_max_step_size: 1.5
-      hydroelastic_stiffness: 1e8
-      point_contact_stiffness: 1e8
-      fem_floor_type: "tet"
-      fem_self_tet: true
-
-  # renderer_config:
-  #   device_index: 0
-  #   logging_level: "warning"
-  #   state_limit: 33554432
-  #   tracing_depth: 32
-  #   rr_depth: 0
-  #   rr_threshold: 0.95
-  #   env_surface: null
-  #   env_radius: 1000.0
-  #   env_pos: [0.0, 0.0, 0.0]
-  #   env_euler: [0.0, 0.0, 0.0]
-  #   env_quat: null
-  #   lights:
-  #     - pos: [0.0, 0.0, 10.0]
-  #       color: [1.0, 1.0, 1.0]
-  #       intensity: 10.0
-  #       radius: 4.0
-  #   normal_diff_clamp: 180
+# Alternative solver configurations
+# replace the rigid or the soft solver in the above config with any of the solvers below
+# solver:
+#   type: mujoco
+#   iterations: null
+#   ls_iterations: null
+#   tolerance: null
+#   use_mujoco_cpu: false
+#   disable_contacts: false
+#
+# solver:
+#   type: semi_implicit
+#   iterations: 2
+#   soft_body_relaxation: 0.9
+#   soft_contact_relaxation: 0.9
+#   joint_linear_relaxation: 0.7
+#   joint_angular_relaxation: 0.4
+#
+# solver:
+#   type: xpbd
+#   iterations: 10
+#   linear_iterations: 10
+#
+# solver:
+#   type: vbd
+#   iterations: 5
+#   friction_epsilon: 0.01
+#   integrate_with_external_rigid_solver: true
+#   particle_enable_self_contact: false
+#   particle_self_contact_radius: 0.002
+#   particle_self_contact_margin: 0.002
+#   particle_conservative_bound_relaxation: 0.85
+#   particle_vertex_contact_buffer_size: 32
+#   particle_edge_contact_buffer_size: 64
+#   particle_collision_detection_interval: -1
+#   particle_edge_parallel_epsilon: 0.00001
+#   particle_enable_tile_solve: true
+#   particle_topological_contact_filter_threshold: 2
+#   particle_rest_shape_contact_exclusion_radius: 0.0
+#   particle_external_vertex_contact_filtering_map: null
+#   particle_external_edge_contact_filtering_map: null
+#   rigid_avbd_beta: 100000.0
+#   rigid_avbd_gamma: 0.99
+#   rigid_contact_k_start: 100.0
+#   rigid_joint_linear_k_start: 10000.0
+#   rigid_joint_angular_k_start: 10.0
+#   rigid_joint_linear_ke: 1000000000.0
+#   rigid_joint_angular_ke: 1000000000.0
+#   rigid_joint_linear_kd: 0.01
+#   rigid_joint_angular_kd: 0.0
+#   rigid_body_contact_buffer_size: 32
+#   rigid_body_particle_contact_buffer_size: 64
+#   rigid_enable_dahl_friction: false
 
 world:
-  plane: true
-  generated: 
-    pos: [0.0, 0.0, 0.0]
-    euler: [0.0, 0.0, 0.0]
-    quat: null
-    visualization: true
-    collision: true
-    requires_jac_and_IK: false
-    randomize: false
-    n_subterrains: [3, 3]
-    subterrain_size: [12.0, 12.0]
-    horizontal_scale: 0.25
-    vertical_scale: 0.005
-    subterrain_types:
-      - [flat_terrain  , random_uniform_terrain, stepping_stones_terrain]
-      - [pyramid_sloped_terrain   , discrete_obstacles_terrain, wave_terrain]
-      - [random_uniform_terrain   , pyramid_stairs_terrain, sloped_terrain]
-    height_field: null
+  name: plane
+  world_type: plane
+  height: 0.0
+  cfg:
+    density: 1000.0
+    ke: 2.5e3
+    kd: 100.0
+    kf: 1000.0
+    ka: 0.0
+    mu: 1.0
+    restitution: 0.0
+  color: [0.125, 0.125, 0.15]
+  label: null
+
+###############################
+# soft cfg
+###############################
+cfg:  &default_soft_cfg
+  is_soft: true
+  vertices: null
+  indices: null
+  density: 100.0
+  k_mu: 1.0e6
+  k_lambda: 1.0e6
+  k_damp: 1.0e-6
+  tri_ke: 0.0
+  tri_ka: 0.0
+  tri_kd: 0.0
+  tri_drag: 0.0
+  tri_lift: 0.0
+  add_surface_mesh_edges: true
+  edge_ke: 0.0
+  edge_kd: 0.0
+  particle_radius: 0.005
+
+##############################
+# rigid cfg
+##############################
+cfg: &default_rigid_cfg
+  density: 1200.0
+  ke: 2500.0
+  kd: 150.0
+  kf: 800.0
+  ka: 10.0
+  mu: 0.9
+  restitution: 0.1
+  mu_torsional: 0.01
+  mu_rolling: 0.0002
+  margin: 0.01
+  gap: 0.001
+  is_solid: true
+  collision_group: 2
+  collision_filter_parent: true
+  has_shape_collision: true
+  has_particle_collision: false
+  is_visible: true
+  is_site: false
+  sdf_narrow_band_range: [-0.05, 0.05]
+  sdf_target_voxel_size: 0.002
+  sdf_max_resolution: 128
+  sdf_texture_format: "uint16"
+  is_hydroelastic: true
+  kh: 1.0e9
 
 objects:
-  box:
-    morph:
-      type: box
-      pos: [0.0, 0.0, 0.5]
-      euler: [0.0, 0.0, 0.0]
-      size: [1.0, 1.0, 1.0]
-      visualization: true
-      collision: true
-      fixed: false
-    material:
-      type: rigid
-      rho: 1000.0
-      friction: 0.5
+  body_ellpsoid:
+    type: ellipsoid
+    body: -1
+    pos: [0.0, 0.0, 0.0]
+    quat: [0.0, 0.0, 0.0, 1.0]
+    rx: 1.0
+    ry: 0.75
+    rz: 0.5
+    cfg: *default_rigid_cfg
+    as_site: false
+    color: [1.0, 0.0, 0.0, 1.0]
+    label: "ellipsoid_1"
 
-  # A sphere floating above
-  sphere:
-    morph:
-      type: sphere
-      pos: [2.0, 0.0, 2.0]
-      radius: 0.5
-      visualization: true
-      collision: true
-      fixed: false
-    material:
-      type: rigid
-      rho: 500.0
-      friction: 0.3
+  body_box:
+    type: box
+    body: -1
+    fixed: false
+    pos: [1.0, 0.0, 0.0]
+    quat: [0.0, 0.0, 0.0, 1.0]
+    hx: 0.5
+    hy: 0.5
+    hz: 0.5
+    cfg: *default_rigid_cfg
+    as_site: true
+    color: [0.0, 1.0, 0.0, 1.0]
+    label: "box_1"
 
-  # A cylinder lying on its side
-  cylinder:
-    morph:
-      type: cylinder
-      pos: [-2.0, 0.0, 0.5]
-      euler: [0.0, 90.0, 0.0]  # Rotate to lie on side
-      height: 2.0
-      radius: 0.3
-      visualization: true
-      collision: true
-      fixed: false
-    material:
-      type: rigid
-      rho: 800.0
+  body_capsule:
+    type: capsule
+    fixed: false
+    body: "body_capsule"
+    pos: [2.0, 0.0, 0.0]
+    quat: [0.0, 0.0, 0.0, 1.0]
+    radius: 0.3
+    half_height: 1.0
+    cfg: *default_soft_cfg
+    as_site: false
+    color: [0.0, 0.0, 1.0, 1.0]
+    label: "capsule_1"
+  
+  body_cylinder:
+    type: cylinder
+    fixed: false
+    body: -1
+    pos: [3.0, 0.0, 0.5]
+    quat: [0.0, 0.0, 0.0, 1.0]
+    radius: 0.4
+    half_height: 0.8
+    cfg: *default_rigid_cfg
+    as_site: false
+    color: [1.0, 1.0, 0.0, 1.0]
+    label: "cylinder_1"
 
-  object_one:
-    name: object_one
-    morph:
-      path: "../../box.urdf"
-      pos: [5.0, 0.0, 0.0]
-      euler: [0.0, 0.0, 0.0]
-      fixed: true
+  body_cone:
+    type: cone
+    fixed: false
+    body: -1
+    pos: [4.0, 0.0, 0.6]
+    quat: [0.0, 0.0, 0.0, 1.0]
+    radius: 0.5
+    half_height: 1.2
+    cfg: *default_rigid_cfg
+    as_site: false
+    color: [1.0, 0.5, 0.0, 1.0]
+    label: "cone_1"
+
+  body_sphere:
+    type: sphere
+    body: -1
+    pos: [5.0, 0.0, 0.0]
+    quat: [0.0, 0.0, 0.0, 1.0]
+    radius: 0.6
+    cfg: *default_rigid_cfg
+    as_site: false
+    color: [0.5, 0.5, 1.0, 1.0]
+    label: "sphere_1"
+
+##############################
+# model cfg (URDF, MJCF, USD)
+##############################
+model_cfg: &default_model_cfg
+  pos: [0.0, 0.0, 0.5]
+  euler: [0.0, 0.0, 0.0]
+  # quat: [1.0, 0.0, 0.0, 0.0]
+  floating: false
+  base_joint: null
+  parent_body: -1
+  force_show_colliders: false
+  enable_self_collisions: true
+  collapse_fixed_joints: false
+  mesh_maxhullvert: null
+  override_root_xform: false
+  namespace: "example"
+  description: "An example model entity"
+
+# Example URDF (Uses default_model_cfg anchor)
+example_urdf: &default_urdf_cfg
+  <<: *default_model_cfg
+  type: urdf
+  source: "path/to/model.urdf"
+  scale: 1.0
+  hide_visuals: false
+  parse_visuals_as_colliders: false
+  up_axis: "Z"
+  ignore_inertial_definitions: false
+  joint_ordering: "dfs"
+  bodies_follow_joint_ordering: true
+  force_position_velocity_actuation: false
+  tags: ["example", "robot"]
+  category: 1
+
+# Example MJCF (Uses default_model_cfg anchor)
+example_mjcf: &default_mjcf_cfg
+  <<: *default_model_cfg
+  type: mjcf
+  source: "path/to/model.xml"
+  armature_scale: 1.0
+  scale: 1.0
+  hide_visuals: false
+  parse_visuals_as_colliders: false
+  parse_meshes: true
+  parse_sites: true
+  parse_visuals: true
+  parse_mujoco_options: true
+  up_axis: "Z"
+  ignore_names: []
+  ignore_classes: []
+  visual_classes: ["visual"]
+  collider_classes: ["collision"]
+  no_class_as_colliders: true
+  ignore_inertial_definitions: false
+  verbose: false
+  skip_equality_constraints: false
+  convert_3d_hinge_to_ball_joints: false
+  ctrl_direct: false
+
+# Example USD (Uses default_model_cfg anchor)
+example_usd: &default_usd_cfg
+  <<: *default_model_cfg
+  type: usd
+  source: "path/to/model.usd"
+  only_load_enabled_rigid_bodies: false
+  only_load_enabled_joints: true
+  joint_drive_gains_scaling: 1.0
+  verbose: false
+  ignore_paths: null
+  apply_up_axis_from_stage: false
+  root_path: "/"
+  joint_ordering: "dfs"
+  bodies_follow_joint_ordering: true
+  skip_mesh_approximation: false
+  load_sites: true
+  load_visual_shapes: true
+  hide_collision_shapes: false
+  parse_mujoco_options: true
+  force_position_velocity_actuation: false
 
 robots:
   robot_one:
     visualize_contact: true
     namespace: "robot"
-    control: # the configs are just for reference, using these values directly will lead to suboptimal results
+    <<: *default_urdf_cfg
+    source:  "path/to/ackerman.urdf"
+    pos: [0.0, 0.0, 0.1]
+    euler: [0.0, 0.0, 0.0]
+    
+    control:
       joint_commands_topic: joint_commands
       joint_commands_topic_frequency: 50
       joint_states_topic: joint_states
@@ -326,128 +390,8 @@ robots:
           armature: 0.0
           force_range: [-1000.0, 1000.0]
           command: position
-
-    morph:
-      path: "/home/vybhav/Desktop/newest_genesis/ackerman.urdf"
-      pos: [0.0, 0.0, 0.0]
-      euler: [0.0, 0.0, 0.0]
-      quat: null
-      visualization: true
-      collision: true
-      requires_jac_and_IK: true
-      scale: 1.0
-      convexify: null
-      recompute_inertia: false
-      fixed: false
-      prioritize_urdf_material: false
-      merge_fixed_links: false
-      links_to_keep: [lidar_link,camera_link,laser_link]
-      
-      # type: drone
-      # file: "drone.urdf"
-      # scale: 1.0
-      # pos: [0.0, 0.0, 0.0]
-      # euler: [0.0, 0.0, 0.0]
-      # quat: null
-      # decimate: true
-      # decimate_face_num: 500
-      # decimate_aggressiveness: 5
-      # convexify: true
-      # decompose_nonconvex: false
-      # decompose_object_error_threshold: 0.15
-      # decompose_robot_error_threshold: .inf
-      # coacd_options: null
-      # visualization: true
-      # collision: true
-      # prioritize_urdf_material: false
-      # model: "CF2X"
-      # COM_link_name: null
-      # propellers_link_names: null
-      # propellers_link_name: ["prop0_link", "prop1_link", "prop2_link", "prop3_link"]
-      # propellers_spin: [-1, 1, -1, 1]
-      # merge_fixed_links: true
-      # links_to_keep: []
-      # default_armature: 0.1
-      # default_base_ang_damping_scale: 1e-5
-
-    material:
-      type: rigid
-      rho: 200.0
-      friction: null
-      needs_coup: true
-      coup_friction: 0.1
-      coup_softness: 0.002
-      coup_restitution: 0.0
-      sdf_cell_size: 0.005
-      sdf_min_res: 32
-      sdf_max_res: 128
-      gravity_compensation: 0
-
-      # type: hybrid
-      # material_rigid:
-      #   type: rigid
-      #   rho: 200.0
-      #   friction: null
-      #   needs_coup: true
-      #   coup_friction: 0.1
-      #   coup_softness: 0.002
-      #   coup_restitution: 0.0
-      #   sdf_cell_size: 0.005
-      #   sdf_min_res: 32
-      #   sdf_max_res: 128
-      #   gravity_compensation: 0
-
-      # material_soft:
-      #   type: fem.muscle
-      #   E: 1.0e4
-      #   nu: 0.45
-      #   rho: 1000
-      #   lam: null
-      #   mu: null
-      #   sampler: null
-      #   model: neohooken
-      #   n_groups: 1
-
-      fixed: false
-      use_default_coupling: false
-      damping: 1000
-      thickness: 0.05
-      soft_dv_coef: 0.01
-
-      func_instantiate_rigid_from_soft: null
-      func_instantiate_soft_from_rigid: null
-      func_instantiate_rigid_soft_association: null
-
-    surface:
-      color: null
-      opacity: null
-      roughness: null
-      metallic: null
-      emissive: null
-      ior: null
-      opacity_texture: null
-      roughness_texture: null
-      metallic_texture: null
-      normal_texture: null
-      emissive_texture: null
-      default_roughness: 1.0
-      vis_mode: null
-      smooth: true
-      double_sided: null
-      normal_diff_clamp: 180
-      recon_backend: splashsurf
-      generate_foam: false
-      foam_options: null
-      diffuse_texture: null
-      specular_trans: 0.0
-      diffuse_trans: 0.0
-
-    sensors: # all the sensor configs are in the <sensor_configs> section
-    # ----------------------------
-    # CAMERA (RGB, Depth, segmentation, normal.)
-    # Although multiple camera types can be specified for one section, it is recommneded to set one camera type per sensor
-    # i.e. if you want RGB and Depth, create two sensors with same transform but different camera_types
-    # ----------------------------
+    
+    sensors: []
 
 
 

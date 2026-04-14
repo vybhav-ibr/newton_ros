@@ -1,0 +1,5 @@
+# Start video recording from a camera
+string name
+---
+bool success
+string message

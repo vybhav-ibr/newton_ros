@@ -1,0 +1,24 @@
+# Motion planning service for robots
+string robot_name
+string attached_intity
+string target_link_name
+float64[] goal_state         # Goal joint angles
+float64[] start_state        # Starting joint angles
+int32 max_nodes
+float64 resolution           # Path resolution
+float64 timeout              # Planning timeout in seconds
+int32 max_retries
+bool smooth_path
+int32 num_waypoints
+bool ignore_collision
+string planner               # Planner type (e.g., RRT)
+string ee_link_name          # End-effector link
+bool visualize               # Show path in GUI
+bool execute                 # Execute path on robot
+geometry_msgs/Point target_pos
+float64 tolerance
+---
+bool success
+bool plan_found
+string message
+float64[] path               # Flattened path [w1_j1, w1_j2, ..., wN_jM]

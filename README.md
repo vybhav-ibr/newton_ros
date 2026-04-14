@@ -1,30 +1,29 @@
-# Genesis ROS Bridge (gs_ros) 🤖
-![alt text](genesis_teaser.png)
-`gs_ros` is a ROS 2 package designed to bridge the gap between the powerful [Genesis](https://github.com/Genesis-Embodied-AI/Genesis.git) simulator and the ROS 2 ecosystem. Genesis is a next-gen physics platform for Robotics and Embodied AI, offering:
+# Newton ROS Bridge (newton_ros) 🤖
+![alt text](Newton-Tasks.gif)
+`newton_ros` is a ROS 2 package designed to bridge the gap between the powerful [Newton](https://github.com/newton-physics/newton.git) simulator and the ROS 2 ecosystem. Newton is a next-gen physics platform for Robotics and Embodied AI, offering:
 
 1.  A universal physics engine built from the ground up for a wide range of materials.
 2.  A lightweight, ultra-fast, and user-friendly robotics simulation platform.
 3.  A powerful and fast photo-realistic rendering system.
-4.  A generative data engine that can create multi-modal data from natural language prompts.
+4.  A modular architecture which allows every part of the simulation pipeline from the render, the physisc solvers, teh contact pipeline ot be fully modular
 
-This project provides the essential tools to kickstart your robotics development and simulation within ROS 2 using Genesis. Using this package is very simple, the main code is 5 lines long 
-![alt text](carbon.png)
+This project provides the essential tools to kickstart your robotics development and simulation within ROS 2 using Newton.
 
 ---
 
 ## ✨ Key Features
 
-`gs_ros` is a lightweight, pure Python package that simplifies the integration of Genesis and ROS 2.
+`newton_ros` is a lightweight, pure Python package that simplifies the integration of Genesis and ROS 2.
 
 -   **ROS 2 Control Integration**: uses a topic based hardware interface for seamless compatibility with the `ros2_control` framework.
--   **Simulator Services**: Exposes core simulator functionalities (like pausing, resetting, domain_randomisation,inverse kinematics, forward kinematics, path planning) through ROS 2 services, defined in the accompanying `gs_ros_interfaces` package.
+-   **Simulator Services**: Exposes core simulator functionalities (like pausing, resetting, domain_randomisation,inverse kinematics, forward kinematics, path planning) through ROS 2 services, defined in the accompanying `newton_ros_interfaces` package.
 -   **Comprehensive Sensor Suite**: Provides a variety of simulated sensors, publishing data on standard ROS 2 topics.
 
 ---
 
 ## 🎮 Supported Sensors
 
-`gs_ros` provides out-of-the-box support for several common robotics sensors:
+`newton_ros` provides out-of-the-box support for several common robotics sensors:
 
 -   📷 **Camera**: Publishes RGB, depth, semantic segmentation, and surface normal images.
 -   📸 **RGBD Camera**: A convenient wrapper for synchronized RGB and point cloud publishing.
@@ -42,8 +41,8 @@ This project provides the essential tools to kickstart your robotics development
 ### Prerequisites
 
 1.  **ROS 2**: This package is developed for ROS 2. Ensure you have a working installation (e.g., jazzy, kilted, rolling, humble).
-2.  **Genesis Simulator**: Install Genesis by following the instructions in the official [Genesis repository](https://github.com/Genesis-Embodied-AI/Genesis.git).
-    > **Note**: `gs_ros` was tested with Genesis `v0.3.5`. Newer versions may have compatibility issues. Please report any problems you encounter!
+2.  **Newton Simulator**: Install Newton by following the instructions in the official [Newton repository](https://github.com/newton-physics/newton.git).
+    > **Note**: `newton_ros` was tested with Genesis `v0.3.5`. Newer versions may have compatibility issues. Please report any problems you encounter!
 
 ### Steps
 
@@ -87,17 +86,17 @@ This project provides the essential tools to kickstart your robotics development
 
 ## 🧪 Example Usage
 
-1. **Start the genesis Simulator and the gs_ros bridge**
+1. **Start the genesis Simulator and the newton_ros bridge**
 
     ```bash
     python test_import.py
     ```
 
 2. **Launch the Ackermann Drive Demo**
-    Run the provided demo from the `gs_ros2_control_demos` package to see a wheeled robot in action.
+    Run the provided demo from the `newton_ros2_control_demos` package to see a wheeled robot in action.
 
     ```bash
-    ros2 launch gs_ros2_control_demos ackermann_drive_example.launch.py
+    ros2 launch newton_ros2_control_demos ackermann_drive_example.launch.py
     ```
 
 ---
@@ -107,7 +106,7 @@ This project provides the essential tools to kickstart your robotics development
 -   **Genesis Version**: Genesis is under active development. Using the latest version from their `main` branch may cause issues. Sticking to a tagged release like `v0.3.5` is recommended. but any version after `v0.3.5` should be mostly compatable
 -   **Parallel Environments**: Support for parallelized simulation environments is not yet implemented but may be added in the future.
 -   **Sensor Models**: Currently, no advanced sensor noise or distortion models are included. This is planned for a future release.
--   **topic_based_hardware_interfaces**: This external package is used gs_ros for integrating ros2_control with a topic based system [topic_based_hardware_interfaces](https://github.com/ros-controls/topic_based_hardware_interfaces).For the `humble` branch [topic_based_ros2_control](https://github.com/PickNikRobotics/topic_based_ros2_control.git) by picknik robotics is used as humble distro is not supported. The update frequncy for the topic-based-hardware-interface may be a limitation, This package is also not suitable for real-time controllers 
+-   **topic_based_hardware_interfaces**: This external package is used newton_ros for integrating ros2_control with a topic based system [topic_based_hardware_interfaces](https://github.com/ros-controls/topic_based_hardware_interfaces).For the `humble` branch [topic_based_ros2_control](https://github.com/PickNikRobotics/topic_based_ros2_control.git) by picknik robotics is used as humble distro is not supported. The update frequncy for the topic-based-hardware-interface may be a limitation, This package is also not suitable for real-time controllers 
 
 ---
 

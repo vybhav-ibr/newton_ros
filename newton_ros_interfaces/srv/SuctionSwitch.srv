@@ -1,0 +1,9 @@
+# Enable or disable a weld constraint (simulated suction/magnet)
+string entity_one
+string link_one
+string entity_two
+string link_two
+bool command            # True to enable, False to disable
+---
+bool success
+string message

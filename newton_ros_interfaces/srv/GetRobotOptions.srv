@@ -1,0 +1,5 @@
+# Retrieve ROS interface options for a robot
+string entity
+---
+RobotOptions options
+simulation_interfaces/Result result

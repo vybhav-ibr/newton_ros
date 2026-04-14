@@ -81,7 +81,7 @@ robots:
 # [4500, 4500, 3500, 3500, 2000, 2000, 2000, 100, 100]
 # [450, 450, 350, 350, 200, 200, 200, 10, 10]
     morph:
-      path: "src/gs_ros2_control_demos/urdf/panda_bullet/panda.urdf"
+      path: "src/newton_ros2_control_demos/urdf/panda_bullet/panda.urdf"
       pos: [0.0, 0.0, 0.0]
       euler: [0.0, 0.0, 0.0]
       quat: null

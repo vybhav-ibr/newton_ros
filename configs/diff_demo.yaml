@@ -1,45 +1,107 @@
-scene:
-  n_envs: 1 # shouldnt be changed
-  sim:
-    dt: 0.05
-    substeps: 1
+builder:
+  # --- Material properties ---
+  default_shape_cfg:
+    density: 1000.0                # kg/m^3
+    ke: 1.0e5                     # contact elastic stiffness
+    kd: 1000.0                      # damping coefficient
+    kf: 1000.0                     # friction damping
+    ka: 0.0                        # adhesion distance
+    mu: 1.0                        # friction coefficient
+    restitution: 0.0               # bounciness (0 = no bounce)
+    mu_torsional: 0.005            # torsional friction
+    mu_rolling: 0.0001             # rolling resistance
+    margin: 0.01                    # collision margin (meters)
+    gap: null                      # optional, fallback to engine default
+    is_solid: true                 # solid vs hollow
+    collision_group: 1             # 0 disables collisions
+    collision_filter_parent: true  # inherit parent filter
+    has_shape_collision: true
+    has_particle_collision: true
+    is_visible: true
+    is_site: false                 # non-colliding reference point
+    sdf_narrow_band_range: [-0.1, 0.1]
+    sdf_target_voxel_size: null    # enables SDF if set
+    sdf_max_resolution: null       # must be divisible by 8
+    sdf_texture_format: "uint16"   # uint8 | uint16 | float32
+    is_hydroelastic: false
+    kh: 1.0e10                    # stiffness for hydroelastic collisions
+  default_joint_cfg:
+    axis: [0.0, 0.0, 1.0]
+    limit_lower: -1.57
+    limit_upper: 1.57
+    limit_ke: 10000.0
+    limit_kd: 10.0
+    target_pos: 0.0
+    target_vel: 0.0
+    target_ke: 200.0
+    target_kd: 5.0
+    armature: 0.0
+    effort_limit: 1e6
+    velocity_limit: 10.0
+    friction: 0.1
+    actuator_mode: "position"
 
-  show_Viewer: false
+sim:
+  fps: 40
+  substeps: 15
 
-  profiling_options:
-    show_FPS: false
+viewer:
+  type: gl
+  width: 1920
+  height: 1080
+  vysnc: false
+  headless: false
 
-  viewer_config:
-    max_FPS: 60
-    camera_fov: 40
-    enable_interaction: false
+solver:
+  rigid:
+    type: featherstone
+    angular_damping: 0.1
+    update_mass_matrix_interval: 1
+    friction_smoothing: 1.0
+    use_tile_gemm: false
+    fuse_cholesky: true
+  # soft:
+  #   type: vbd
 
-  vis_config:
-    show_cameras: false
-    shadow: false
-    plane_reflection: false
-    lights:
-      - type: directional
-        dir: [-1, -1, -1]
-        color: [1.0, 1.0, 1.0]
-        intensity: 5.0
-
-  rigid_config:
-    enable_collision: true
-    enable_joint_limit: true
-    enable_self_collision: false
-    max_collision_pairs: 300
+collider:
+  reduce_contacts: true
+  rigid_contact_max: null
+  max_triangle_pairs: 1000000
+  shape_pairs_filtered: null
+  soft_contact_max: null
+  soft_contact_margin: 0.01
+  requires_grad: null
+  broad_phase: null
 
 world:
   name: plane
-  world_type: plane #[plane, terrain, file]
+  type: plane
+  is_world: true
+  height: 0.0
+  cfg:
+    density: 1000.0
+    ke: 2.5e3
+    kd: 100.0
+    kf: 1000.0
+    ka: 0.0
+    mu: 1.0
+    restitution: 0.0
+  color: [0.125, 0.125, 0.15]
+  label: null
+
 
 objects:
 
 robots:
-  diff_bot:
-    visualize_contact: false
+  diff_drive:
+    type: urdf
     namespace: "robot"
+    source: "src/newton_ros2_control_demos/urdf/test_diff_drive.xacro.urdf"
+    pos: [0.0, 0.0, 0.05]
+    euler: [0.0, 0.0, 0.0]
+    quat: null
+    floating: true
+
     control:
       joint_commands_topic: joint_commands
       joint_commands_topic_frequency: 50
@@ -48,105 +110,55 @@ robots:
       joint_control_topic: joint_control
       joint_control_topic_frequency: 50
       joint_properties: 
-        left_wheel_joint:
-          kp: 50
-          kv: 50
+        left_wheel_steering_joint:
+          stiffness: 50 #Kp
+          damping: 5 #kv
+          command: position
+        rear_left_wheel_joint:
+          stiffness: 5
+          damping: 1
           command: velocity
-        right_wheel_joint:
-          kp: 50
-          kv: 50
+        rear_right_wheel_joint:
+          stiffness: 5
+          damping: 1
           command: velocity
-
-    morph:
-      path: "src/gs_ros2_control_demos/urdf/test_diff_drive.xacro.urdf"
-      pos: [0.0, 0.0, 0.0]
-      euler: [0.0, 0.0, 0.0]
-      quat: null
-      visualization: true
-      collision: true
-      requires_jac_and_IK: true
-      scale: 1.0
-      convexify: null
-      recompute_inertia: false
-      fixed: false
-      prioritize_urdf_material: false
-      merge_fixed_links: false
-      links_to_keep: [lidar_link,camera_link,laser_link]
-
-    material:
-      type: rigid
-      rho: 200.0
-      friction: null
-      needs_coup: true
-      coup_friction: 0.1
-      coup_softness: 0.002
-      coup_restitution: 0.0
-      sdf_cell_size: 0.005
-      sdf_min_res: 32
-      sdf_max_res: 128
-      gravity_compensation: 0
+        right_wheel_steering_joint:
+          stiffness: 50
+          damping: 5
+          command: position
 
     sensors: # all the sensor configs are in the sensor_configs.yaml section
     - name: front_cam
-      general_sensor_options:
-        sensor_type: cam
-        delay: 0.0
-        update_ground_truth_only: false
-        draw_debug: false
+      sensor_type: cam
       ros_options:
         frame_id: lidar_link
-        frequency: 50.0
+        frequency: 30.0
         qos_history: keep_last
         qos_depth: 10
         qos_reliability: reliable
         qos_durability: volatile
-      rigid_options:
+      attachment:
         link: lidar_link
-        pos_offset: [0.0, 0.0, 0.0]
+        pos_offset: [0.0, 0.0, 0.15]
         euler_offset: [90.0, 0.0, -90.0]
-      camera_types: [rgb, depth, segmentation, normal]
-      res: [640, 480]
+      camera_types: [rgb, depth, segmentation,normal, albedo]
+      res: [640, 400]
       fov: 30.0
-      near: 0.05
-      far: 10.0
-      aperture: 2.8
-      denoise: true
-      spp: 256
-      model: pinhole
-      focus_dist: 0.0
-      gui: false
-      add_noise: false
-      noise_mean: 0.0
-      noise_std: 0.01
-
-    - name: lidar
-      general_sensor_options:
-        sensor_type: lidar
-        delay: 0.0
-        update_ground_truth_only: false
-        draw_debug: false
-      ros_options:
-        frame_id: lidar_link
-        frequency: 10.0
-        topic: lidar_topic
-        qos_history: keep_last
-        qos_depth: 10
-        qos_reliability: reliable
-        qos_durability: volatile  
-      rigid_options:
-        link: lidar_link
-        pos_offset: [0.0, 0.0, 0.5]
-        euler_offset: [0.0, 0.0, 0.0]
-      spherical_pattern:
-        fov: [360.0, 30.0]
-        n_points: [64, 128]
-      min_range: 0.3
-      max_range: 100.0
-      draw_point_radius: 0.03
-      ray_start_color: [0.5, 0.5, 1.0, 1.0]
-      ray_hit_color: [1.0, 0.0, 0.0, 1.0]
-      return_points_in_world_frame: false
-      add_noise: false
+      render_cfg:
+        enable_textures: true
+        enable_shadows: true
+        enable_ambient_lighting: true
+        enable_particles: true
+        enable_backface_culling: true
+        render_order: TILED
+        tile_width: 32
+        tile_height: 16
+        max_range: 50.0
+      lights:
+        top_down_light:
+          direction: [0.0, 0.0, -1.0]
+          enable_shadows: true
+      add_noise: true
       noise_mean: 0.0
       noise_std: 0.01
 

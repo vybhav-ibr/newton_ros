@@ -1,0 +1,18 @@
+# Configuration for Lidar sensors (spherical, grid, sectional)
+GeneralSensorOptions options
+RosSensorOptions ros_options
+RigidSensorOptions rigid_options
+GridRayCasterPattern grid_pattern_options
+SphericalRayCasterPattern spherical_pattern_options
+DepthCameraRayCasterPattern depth_camera_pattern_options
+
+float32 min_range
+float32 max_range
+float32  no_hit_value
+bool return_points_in_world_frame
+float32 draw_point_radius
+float32[] ray_start_color
+float32[] ray_hit_color
+bool add_noise
+float32 noise_mean
+float32 noise_std
