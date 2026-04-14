@@ -1,6 +1,0 @@
-# Retrieve current pose for an entity
-string entity_name
----
-geometry_msgs/Pose pose
-bool success
-string message

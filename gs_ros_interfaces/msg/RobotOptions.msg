@@ -1,8 +1,0 @@
-# Configuration for robot-specific ROS interfacing
-string joint_states_topic
-float32 joint_states_topic_frequency
-string joint_commands_topic
-float32 joint_commands_topic_frequency
-string joints_control_topic
-float32 joints_control_topic_frequency
-gs_ros_interfaces/JointProperty[] joint_properties

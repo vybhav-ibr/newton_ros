@@ -1,8 +1,0 @@
-# Modify joint or link level physics parameters
-string attribute             # e.g., kp, kv, mass, damping
-string[] names               # Parent entity names
-string[] dof_names           # Joint or link names
-float64[] value              # New values
----
-bool success
-string message
