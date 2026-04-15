@@ -14,7 +14,7 @@ This project provides the essential tools to kickstart your robotics development
 
 ## ✨ Key Features
 
-`newton_ros` is a lightweight, pure Python package that simplifies the integration of Genesis and ROS 2.
+`newton_ros` is a lightweight, pure Python package that simplifies the integration of Newton and ROS 2.
 
 -   **ROS 2 Control Integration**: uses a topic based hardware interface for seamless compatibility with the `ros2_control` framework.
 -   **Simulator Services**: Exposes core simulator functionalities (like pausing, resetting, domain_randomisation,inverse kinematics, forward kinematics, path planning) through ROS 2 services, defined in the accompanying `newton_ros_interfaces` package.
@@ -43,12 +43,12 @@ This project provides the essential tools to kickstart your robotics development
 
 1.  **ROS 2**: This package is developed for ROS 2. Ensure you have a working installation (e.g., jazzy, kilted, rolling, humble).
 2.  **Newton Simulator**: Install Newton by following the instructions in the official [Newton repository](https://github.com/newton-physics/newton.git).
-    > **Note**: `newton_ros` was tested with Genesis `v1.0.0`. Newer versions may have compatibility issues. Please report any problems you encounter!
+    > **Note**: `newton_ros` was tested with Newton `v1.0.0`. Newer versions may have compatibility issues. Please report any problems you encounter!
 
 ### Steps
 
 1.  **Downgrade NumPy(optional)**
-    The default NumPy version installed with Genesis may not be compatible with ROS 2. Downgrade to a compatible version:
+    The default NumPy version installed with Newton may not be compatible with ROS 2. Downgrade to a compatible version:
     ```bash
     pip install numpy==1.26.4
     ```
@@ -86,7 +86,7 @@ This project provides the essential tools to kickstart your robotics development
 
 ## 🧪 Example Usage
 
-1. **Start the genesis Simulator and the newton_ros bridge**
+1. **Start the Newton Simulator and the newton_ros bridge**
 
     ```bash
     python test_import.py
@@ -112,5 +112,5 @@ This project provides the essential tools to kickstart your robotics development
 ## 🤝 Contributing & Support
 
 -   **Contributions Welcome!** Feel free to open a Pull Request to fix a bug or add a feature. If you'd like to contribute long-term, please open an issue to discuss it.
--   **Need Help?** For bugs, feature requests, or suggestions, please open an [issue](https://github.com/vybhav-ibr/genesis_ros/issues) in the repository.
--   **Configuration Docs**: For details on the parameters in the config files, please refer to the Genesis source code, as the official documentation may not be up-to-date.
+-   **Need Help?** For bugs, feature requests, or suggestions, please open an [issue](https://github.com/vybhav-ibr/Newton_ros/issues) in the repository.
+-   **Configuration Docs**: For details on the parameters in the config files, please refer to the Newton source code, as the official documentation may not be up-to-date.
